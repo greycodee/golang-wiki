@@ -1,3 +1,3 @@
 * 基础
-    * [指南](doc/guid.md "指南")
+    * [环境安装](doc/install.md "go环境安装")
     * [基础入门](doc/base.md)
