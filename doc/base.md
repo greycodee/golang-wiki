@@ -1,6 +1,7 @@
-# 基础入门
+
 golang基础
 ## int类型
+### 搜索
 int类型
 ## string类型
 string类型
