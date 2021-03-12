@@ -1,8 +1,9 @@
 
-![logo](images/go.png)
+![logo](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/go.png)
 
-# Golang中文教程 <small>version 1.16.2</small>
+# Golang <small>1.16.2</small>
 
+> 中文教程
 
 [GitHub](https://github.com/greycodee/golang-wiki)
 [Get Started](/README.md)
