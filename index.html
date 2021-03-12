@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta charset="UTF-8">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.css">
 </head>
 <body>
   <div id="app"></div>
@@ -20,6 +21,25 @@
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-go.min.js"></script>
   <!-- bash/shell 代码高亮-->
   <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <!-- emoji -->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
+  <!-- 代码块复制剪切板按钮 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+  <!-- gitalk 留言 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/gitalk.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+<script>
+  const gitalk = new Gitalk({
+    clientID: 'ce00f00d1774544b0cbd',
+    clientSecret: 'b0560d0bb5c9a0e0a4b5bf4efb249c6db9af69ad',
+    repo: 'golang-wiki',
+    owner: 'greycodee',
+    admin: ['greycodee'],
+    proxy: 'https://proud-thunder-53ad.zhengminghui99.workers.dev/?https://github.com/login/oauth/access_token',
+    // facebook-like distraction free mode
+    distractionFreeMode: false
+  })
+</script>
 
 </body>
 </html>
