@@ -12,7 +12,7 @@ Go目前支持三大平台的安装，`Linux`，`Mac`，`Windows`。具体方法
     rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.2.linux-amd64.tar.gz
     ```
 
-	!>注意：如果不是`root`用户，请带上`sudo`
+	⚠️注意：如果不是`root`用户，请带上`sudo`
 
 2. 设置环境变量
 
