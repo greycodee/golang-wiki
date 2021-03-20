@@ -3,7 +3,7 @@
 
 # Golang <small>1.16.2</small>
 
-> 中文教程
+> 中文入门教程
 
 [GitHub](https://github.com/greycodee/golang-wiki)
 [Get Started](/README.md)
