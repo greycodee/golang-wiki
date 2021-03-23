@@ -7,3 +7,6 @@
 * 基本语法
     * [变量赋值](doc/BasicGrammar/define_var.md "快速开始")
     * [if判断](doc/BasicGrammar/if.md "快速开始")
+
+* 标准库
+    * [net/smtp](doc/package/net/smtp.md "go smtp包")
