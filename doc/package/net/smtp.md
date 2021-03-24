@@ -1,11 +1,19 @@
 # net/smtp包
 
 ## 简介
+
+### 协议简介
+`SMTP`协议发送邮件流**指令**程示意图：
+
+![](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/smtp_process.png)
+
+### 包简介
 `SMTP`包是实现`SMTP(Simple Mail Transfer Protocol)`协议的一个包,遵守了[RFC5321](https://www.rfc-editor.org/rfc/rfc5321.html),同时相关拓展也准守了相关`RFC文档`
 
 > 8BITMIME    [RFC 1652](https://rfc-editor.org/rfc/rfc1652.html) </br>
 > AUTH        [RFC 2554](https://rfc-editor.org/rfc/rfc2554.html)</br>
 > STARTTLS    [RFC 3207](https://rfc-editor.org/rfc/rfc3207.html)
+
 
 ## 函数
 
@@ -332,5 +340,186 @@ func (c *Client) Extension(ext string) (bool, string) {
 </details>
 
 ### (*Client) Hello
+此方法会向`SMTP服务器`发送`HELO/EHLO`指令，需要在调用任何方法前调用它
+<details>
+<summary style="color:#42b983">查看(*Client) Hello源码</summary>
 
+```go
+func (c *Client) hello() error {
+	if !c.didHello {
+		c.didHello = true
+		err := c.ehlo()
+		if err != nil {
+			c.helloError = c.helo()
+		}
+	}
+	return c.helloError
+}
+```
+</details>
 
+### (*Client) Mail
+Mail使用提供的电子邮件地址向服务器发出`MAIL`命令。 如果服务器支持`8BITMIME`扩展名，则Mail将添加`BODY = 8BITMIME`参数。 如果服务器支持`SMTPUTF8`扩展名，则Mail将添加`SMTPUTF8`参数。 这将启动邮件事务，然后进行一个或多个`Rcpt`调用。
+<details>
+<summary style="color:#42b983">查看(*Client) Mail源码</summary>
+
+```go
+func (c *Client) Mail(from string) error {
+	if err := validateLine(from); err != nil {
+		return err
+	}
+	if err := c.hello(); err != nil {
+		return err
+	}
+	cmdStr := "MAIL FROM:<%s>"
+	if c.ext != nil {
+		if _, ok := c.ext["8BITMIME"]; ok {
+			cmdStr += " BODY=8BITMIME"
+		}
+		if _, ok := c.ext["SMTPUTF8"]; ok {
+			cmdStr += " SMTPUTF8"
+		}
+	}
+	_, _, err := c.cmd(250, cmdStr, from)
+	return err
+}
+```
+</details>
+
+### (*Client) Noop
+此方法会向`SMTP`服务器发送`NOOP`指令，其他不做任何操作，只是检查与`SMTP`服务器的连接是否正常
+<details>
+<summary style="color:#42b983">查看(*Client) Noop源码</summary>
+
+```go
+func (c *Client) Noop() error {
+	if err := c.hello(); err != nil {
+		return err
+	}
+	_, _, err := c.cmd(250, "NOOP")
+	return err
+}
+```
+</details>
+
+### (*Client) Quit
+向`SMTP`服务器器发送`QUIT`指令，关闭客户端与`SMTP`服务器的连接
+<details>
+<summary style="color:#42b983">查看(*Client) Quit源码</summary>
+
+```go
+func (c *Client) Quit() error {
+	if err := c.hello(); err != nil {
+		return err
+	}
+	_, _, err := c.cmd(221, "QUIT")
+	if err != nil {
+		return err
+	}
+	return c.Text.Close()
+}
+```
+</details>
+
+### (*Client) Rcpt
+向`SMTP`服务器对要接收的邮件地址发送`RCPT`指令</br>
+
+!> 需先调用`Mail`方法，然后再调用此方法
+
+<details>
+<summary style="color:#42b983">查看(*Client) Rcpt源码</summary>
+
+```go
+func (c *Client) Rcpt(to string) error {
+	if err := validateLine(to); err != nil {
+		return err
+	}
+	_, _, err := c.cmd(25, "RCPT TO:<%s>", to)
+	return err
+}
+```
+</details>
+
+### (*Client) Reset
+将`RSET`命令发送到`SMTP`服务器，从而中止当前的邮件事务。
+<details>
+<summary style="color:#42b983">查看(*Client) Reset源码</summary>
+
+```go
+func (c *Client) Reset() error {
+	if err := c.hello(); err != nil {
+		return err
+	}
+	_, _, err := c.cmd(250, "RSET")
+	return err
+}
+```
+</details>
+
+### (*Client) StartTLS
+发送`STARTTLS`命令并加密接下来所有的通信。仅发布`STARTTLS`扩展的`SMTP`服务器支持此功能。
+
+示例：
+```go
+// 开启QQ邮箱的`TLS`
+client,err:=smtp.Dial("smtp.qq.com:25")
+config := &tls.Config{ServerName: "smtp.qq.com"}
+client.StartTLS(config)
+```
+<details>
+<summary style="color:#42b983">查看(*Client) Reset源码</summary>
+
+```go
+func (c *Client) StartTLS(config *tls.Config) error {
+	if err := c.hello(); err != nil {
+		return err
+	}
+	_, _, err := c.cmd(220, "STARTTLS")
+	if err != nil {
+		return err
+	}
+	c.conn = tls.Client(c.conn, config)
+	c.Text = textproto.NewConn(c.conn)
+	c.tls = true
+	return c.ehlo()
+}
+```
+</details>
+
+### (*Client) TLSConnectionState
+检查客户端的`TLS`连接状态，如果`TLS`没有连接，则第二个参数返回false。
+<details>
+<summary style="color:#42b983">查看(*Client) Reset源码</summary>
+
+```go
+func (c *Client) TLSConnectionState() (state tls.ConnectionState, ok bool) {
+	tc, ok := c.conn.(*tls.Conn)
+	if !ok {
+		return
+	}
+	return tc.ConnectionState(), true
+}
+```
+</details>
+
+###  (*Client) Verify
+检查邮件地址是否有效，返回`error`为`nil`时则证明地址有效。</br>
+
+!> 一般不使用此方法
+
+<details>
+<summary style="color:#42b983">查看(*Client) Reset源码</summary>
+
+```go
+func (c *Client) Verify(addr string) error {
+	if err := validateLine(addr); err != nil {
+		return err
+	}
+	if err := c.hello(); err != nil {
+		return err
+	}
+	_, _, err := c.cmd(250, "VRFY %s", addr)
+	return err
+}
+```
+</details>
