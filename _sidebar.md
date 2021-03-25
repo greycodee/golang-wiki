@@ -9,4 +9,5 @@
     * [if判断](doc/BasicGrammar/if.md "快速开始")
 
 * 标准库
-    * [net/smtp](doc/package/net/smtp.md "go smtp包")
+    * [io](doc/package/io/io.md "go io包")
+    * [net/smtp](doc/package/net/smtp.md "go net/smtp包")
