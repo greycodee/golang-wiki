@@ -10,7 +10,7 @@
 
 ## 功能
 上面思维导图中虽然方法，接口一大堆，但是我们正常用的话用下面的几个函数就可以了，这几个函数也是对`io`包里的方法进一步封装。
-![](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/xmind_go_io_func.png)
+![](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/xmind_go_io_func1.png)
 
 ### 复制
 
