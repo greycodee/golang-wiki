@@ -135,3 +135,82 @@ again:
 ![defer1_13](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/defer/defer1_13.jpg)
 
 除了分配位置的不同，栈上分配和堆上分配执行流程并没有本质的不同，而该方法可以适用于绝大多数的场景，与堆上分配相比，该方法可以将 `defer` 关键字的额外开销降低 30%。
+
+## 1.14版本中的defer
+
+在`go1.14`中，官方又对`defer`做了升级，据说这次升级把速度提升了一个量级。
+
+![defer_open](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/defer/defer_open.jpg)
+
+在编译期间，会直接把`defer`放到函数末尾去执行，**省去了`_defer`结构体和链表的使用**。官方把这种方法命名为：**开放编码(Open Coded)**
+
+不过需要满足以下条件，否则并不会使用开放编码：
+
+- 函数的 `defer` 数量少于或者等于 8 个；
+- 函数的 `defer` 关键字不能在循环中执行；
+- 函数的 `return` 语句与 `defer` 语句的乘积小于或者等于 15 个；
+
+### 延迟比特
+
+为什么上面说`defer`的数量要小于等于8个呢？这是由于延迟比特的限制。延迟比特只有8个，默认值为0，每个对应一个`defer`，延迟比特的作用是判断`defer`语句到底要不要执行，例如：
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	i:=1
+	if i==1{
+		defer fmt.Println("defer")
+	}
+}
+```
+
+`defer`外面有一个`if`判断语句，当判断语句为`true`时，就会把对应的`defer`比特位设为`1` 。然后在函数末尾每个`defer`都会判断对应的比特位记录是否为`1`，如果为`1`就执行，否则就不执行。
+
+![defer_bit](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/defer/defer_bit.jpg)
+
+### 使用时机
+
+在当前版本中，`defer`一共有三种执行方式，那`go`到底是如何判断当前的`defer`是该用哪种方式呢？
+
+代码生成阶段的 [`cmd/compile/internal/gc.state.stmt`](https://draveness.me/golang/tree/cmd/compile/internal/gc.state.stmt) 会负责处理程序中的 `defer`，该函数会根据条件的不同，使用三种不同的机制处理该关键字：
+
+```go
+func (s *state) stmt(n *Node) {
+	...
+	switch n.Op {
+	case ODEFER:
+		if s.hasOpenDefers {
+			s.openDeferRecord(n.Left) // 开放编码
+		} else {
+			d := callDefer // 堆分配
+			if n.Esc == EscNever {
+				d = callDeferStack // 栈分配
+			}
+			s.callResult(n.Left, d)
+		}func (s *state) stmt(n *Node) {
+	...
+	switch n.Op {
+	case ODEFER:
+		if s.hasOpenDefers {
+			s.openDeferRecord(n.Left) // 开放编码
+		} else {
+			d := callDefer // 堆分配
+			if n.Esc == EscNever {
+				d = callDeferStack // 栈分配
+			}
+			s.callResult(n.Left, d)
+		}
+	}
+}
+	}
+}
+```
+
+### panic问题
+
+虽然最新版本中的`defer`速度非常快，但是当程序发送`panic`时，在这之后的正常逻辑就都不会执行了，而是直接去执行`defer链表`。那些使用**开放地址（open coded）**在函数内展开，因而没有被注册到链表的`defer`函数要通过**栈扫描**的方式来发现。
+
+![defer_114](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/defer/defer_114.jpg)
