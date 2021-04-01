@@ -32,7 +32,7 @@ func main() {
 
 > **频繁的堆分配势必影响性能，所以Go语言会预分配不同规格的deferpool，执行时从空闲_defer中取一个出来用。没有空闲的或者没有大小合适的，再进行堆分配。用完以后，再放回空闲_defer池。这样可以避免频繁的堆分配与回收。**
 
-![defer1](../../../images/defer/defer1.jpg)
+![defer1](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/defer/defer1.jpg)
 
 通过上面的流程，我们就可以理解多个`defer`的输出流程了
 
@@ -71,13 +71,13 @@ func main() {
 
 上面说到每个`defer`都是由一个个结构组成的，所以`go`会对多个同样的没有捕获参数的`defer`做出优化。具体看图解
 
-![defer4](../../../images/defer/defer4.jpg)
+![defer4](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/defer/defer4.jpg)
 
 
 
 ## defer的参数取值
 
-在`defer`注册的时候，编译器会在它自己的个参数后面，开辟一段空间，用于存放defer函数的返回值和参数。**这一段空间会在注册defer时，直接拷贝到_defer结构体的后面。![defer5](../../../images/defer/defer5.jpg)**
+在`defer`注册的时候，编译器会在它自己的个参数后面，开辟一段空间，用于存放defer函数的返回值和参数。**这一段空间会在注册defer时，直接拷贝到_defer结构体的后面。![defer5](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/defer/defer5.jpg)**
 
 所以就可以解释下面这段代码了：
 
@@ -132,6 +132,6 @@ again:
 
 在新版本中`_defer`的结构体新加了一个字段`heap`用来判断结构是在堆上还是在栈上。然后通过编译，把`_defer`结构体分配到栈上，`help`字段设为`false`。其他执行步骤与`1.12`没有太大的差别。
 
-![defer1_13](../../../images/defer/defer1_13.jpg)
+![defer1_13](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/defer/defer1_13.jpg)
 
 除了分配位置的不同，栈上分配和堆上分配执行流程并没有本质的不同，而该方法可以适用于绝大多数的场景，与堆上分配相比，该方法可以将 `defer` 关键字的额外开销降低 30%。

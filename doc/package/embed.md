@@ -52,7 +52,7 @@ func (f FS) ReadFile(name string) ([]byte, error)
 ## 基本使用示例
 首先在项目下建立一个`static`文件夹（当然名字随意命名，没有规定），然后在下面创建几个文件，分别在文件里填入**我是s1/s2/s3文件里的**具体如下目录结构
 
-![](../../../images/go_embed_demo.png)
+![](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/go_embed_demo.png)
 
 ### 导入为string
 ```go

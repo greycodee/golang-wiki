@@ -15,7 +15,7 @@ fmt.Println(slice)
 [0 0 0 0]
 ```
 
-![slice1](../../../images/slice/slice1.jpg)
+![slice1](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/slice/slice1.jpg)
 
 ### 切片字面量
 
@@ -30,7 +30,7 @@ fmt.Println(slice)
 [1 2 3 4]
 ```
 
-![slice2](../../../images/slice/slice2.jpg)
+![slice2](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/slice/slice2.jpg)
 
 ### `nil`切片
 
@@ -54,7 +54,7 @@ fmt.Println(slice)
 []
 ```
 
-![slice3](../../../images/slice/slice3.jpg)
+![slice3](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/slice/slice3.jpg)
 
 ## 两个切片共用一个底层数据
 
@@ -77,7 +77,7 @@ fmt.Println(slice)
     [2 3]
     ```
 
-![slice4](../../../images/slice/slice4.jpg)
+![slice4](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/slice/slice4.jpg)
 
 - 修改slice2切片的数据
 
@@ -93,7 +93,7 @@ fmt.Println(slice)
   [2 99]
   ```
 
-  ![slice5](../../../images/slice/slice5.jpg)
+  ![slice5](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/slice/slice5.jpg)
 
 ### 添加数据操作
 
@@ -111,7 +111,7 @@ fmt.Println(slice2)
 [2 99 66]
 ```
 
-![slice6](../../../images/slice/slice6.jpg)
+![slice6](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/slice/slice6.jpg)
 
 ###　使添加操作不影响原切片
 
@@ -137,7 +137,7 @@ fmt.Println(slice2)
 [2 66]
 ```
 
-![slice7](../../../images/slice/slice7.jpg)
+![slice7](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/slice/slice7.jpg)
 
 ## 扩容
 
@@ -160,5 +160,5 @@ fmt.Println("内容：",slice)
 内容： [1 2 3 4 88]
 ```
 
-![slice8](../../../images/slice/slice8.jpg)
+![slice8](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/slice/slice8.jpg)
 
