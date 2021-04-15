@@ -16,3 +16,6 @@
 
 * 进阶
     * [GMP模型](doc/advanced/gmp_mode.md "GMP模型")
+
+* 官方FAQ
+    * [官方FAQ解答](doc/faq/faq.md "官方FAQ解答")

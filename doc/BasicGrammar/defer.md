@@ -192,25 +192,12 @@ func (s *state) stmt(n *Node) {
 			s.callResult(n.Left, d)
 		}func (s *state) stmt(n *Node) {
 	...
-	switch n.Op {
-	case ODEFER:
-		if s.hasOpenDefers {
-			s.openDeferRecord(n.Left) // 开放编码
-		} else {
-			d := callDefer // 堆分配
-			if n.Esc == EscNever {
-				d = callDeferStack // 栈分配
-			}
-			s.callResult(n.Left, d)
-		}
-	}
-}
 	}
 }
 ```
 
 ### panic问题
 
-虽然最新版本中的`defer`速度非常快，但是当程序发送`panic`时，在这之后的正常逻辑就都不会执行了，而是直接去执行`defer链表`。那些使用**开放地址（open coded）**在函数内展开，因而没有被注册到链表的`defer`函数要通过**栈扫描**的方式来发现。
+虽然最新版本中的`defer`速度非常快，但是当程序发送`panic`时，在这之后的正常逻辑就都不会执行了，而是直接去执行`defer链表`。那些使用**开放地址（open coded）**在函数内展开，因而没有被注册到链表的`defer`函数要通过**栈扫描**的方式来发现。所以1.14版本中就添加了几个字段用来辅助`panic`的栈扫描。
 
 ![defer_114](https://cdn.jsdelivr.net/gh/greycodee/golang-wiki@main/images/defer/defer_114.jpg)
